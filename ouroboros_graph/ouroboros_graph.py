@@ -99,7 +99,7 @@ class OuroborosGraph:
         Returns a set of all the nodes
         :return: A set of all the nodes
         """
-        return self._outgoing.keys()
+        return set(self._outgoing.keys())
 
     def adjacent_nodes(self, x):
         """
@@ -108,7 +108,7 @@ class OuroborosGraph:
         :param x:
         :return: returns adjacent nodes
         """
-        return self._outgoing[x].keys()
+        return set(self._outgoing[x].keys())
 
     def is_adjacent(self, x, y):
         """
@@ -151,12 +151,12 @@ class OuroborosGraph:
         self._outgoing[x] = {}
         self._incoming[x] = {}
 
-    def add_edge(self, x, y, z):
+    def add_edge(self, x, y, value=None):
         """
         Inserts an edge between x and y with data z
         :param x: the starting node of the edge
         :param y: the ending node of the edge
-        :param z: data on the node
+        :param value: data on the node
         :return:
         :raises Exception: when x or y are not nodes in the graph, or if edge exists
         """
@@ -165,11 +165,11 @@ class OuroborosGraph:
         if self.contains_edge(x, y):
             raise Exception("Cannot insert edge that already exists.")
         self._num_edges += 1
-        edge = self.Edge(x, y, z)
+        edge = self.Edge(x, y, value)
         self._outgoing[x][y] = edge
         self._incoming[y][x] = edge
         if not self.is_directed():
-            edge2 = self.Edge(y, x, z)
+            edge2 = self.Edge(y, x, value)
             self._outgoing[y][x] = edge2
             self._incoming[x][y] = edge2
 
@@ -210,12 +210,23 @@ class OuroborosGraph:
             del self._incoming[x][y]
         self._num_edges -= 1
 
-    def overwrite_graph(self, edge_list):
-        """
-        Takes in a list of tuples (x, y, z) and overwrites the existing graph
-        :param edge_list:
-        :return:
-        :raises Exception: if duplicate edges are encountered
-        """
-        pass
+    def clear(self):
+        self._outgoing = {}
+        self._incoming = {}
+        self._num_edges = 0
+        self._size = 0
 
+    def overwrite_graph(self, edge_list=[]):
+        """
+        Takes in a list of tuples (x, y, value) and overwrites the existing graph
+        :param edge_list: list of edges to generate the new connected graph
+        :return:
+        """
+        self.clear()
+        for x, y, value in edge_list:
+            if not self.contains(x):
+                self.add_node(x)
+            if not self.contains(y):
+                self.add_node(y)
+            if not self.contains_edge(x, y):
+                self.add_edge(x, y, value)
