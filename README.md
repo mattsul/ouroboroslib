@@ -1,1 +1,1 @@
-# ograph
+# Ouroboros Graph
