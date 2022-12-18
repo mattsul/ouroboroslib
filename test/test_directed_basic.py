@@ -1,4 +1,4 @@
-from ouroboros_graph.ouroboros_graph import OuroborosGraph
+from ouroboroslib.ouroboros_graph import OuroborosGraph
 
 
 def test_delete_node():

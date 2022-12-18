@@ -7,12 +7,12 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = '0.0.2'
+VERSION = '0.0.1'
 DESCRIPTION = 'A Graph Abstract Data Type'
 
 # Setting up
 setup(
-    name="ouroboros-graph",
+    name="ouroboroslib",
     version=VERSION,
     author="William Nguyen",
     author_email="williamvnguyen2@gmail.com",
@@ -21,7 +21,7 @@ setup(
     long_description=long_description,
     packages=find_packages(),
     install_requires=[],
-    url="https://github.com/williamvietnguyen/ouroboros-graph",
+    url="https://github.com/williamvietnguyen/ouroboroslib",
     keywords=['python', "graph", "data", "structure", "data-structure"],
     classifiers=[
         "Development Status :: 1 - Planning",

@@ -1,15 +1,15 @@
-# Ouroboros Graph
+# Ouroboroslib
 
-An implementation of an adjacency list graph representation with algorithm support. Named after the ancient symbol of a serpent eating its own tail.
+A Graph Abstract Data Type Library. Named after the symbol of a serprent eating its own tail.
 
 ## Installation
 
-`pip3 install ouroboros-graph`
+`pip3 install ouroboroslib`
 
 ## Usage
 
 ```py
-from ouroboros-graph import OuroborosGraph
+from ouroboroslib import OuroborosGraph
 
 ouroboros = OuroborosGraph(directed=True)
 # Each tuple in the edge list is (starting_node, ending_node, edge_value)

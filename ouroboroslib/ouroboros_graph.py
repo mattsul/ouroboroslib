@@ -1,6 +1,3 @@
-from typing import Set
-
-
 class OuroborosGraph:
     """
     An adjacency list implementation of a Graph Abstract Data Type
@@ -50,6 +47,10 @@ class OuroborosGraph:
             return hash(id(self))
 
     def __init__(self, directed=False):
+        """
+        Initializes an empty graph
+        :param directed: whether the graph uses directed edges or not
+        """
         self._size = 0
         self._num_edges = 0
         self._directed = directed
@@ -94,7 +95,7 @@ class OuroborosGraph:
         """
         return y in self._outgoing[x]
 
-    def nodes(self) -> Set:
+    def nodes(self):
         """
         Returns a set of all the nodes
         :return: A set of all the nodes
@@ -120,7 +121,7 @@ class OuroborosGraph:
         """
         return y in self.adjacent_nodes(x)
 
-    def edges(self) -> Set[Edge]:
+    def edges(self):
         """
         Returns a set of all the edges
         :return: A set of all the edges
@@ -135,6 +136,10 @@ class OuroborosGraph:
         return edges
 
     def tuple_edges(self):
+        """
+        Returns a set of the edges as tuples
+        :return: A set of all edges as tuples
+        """
         edges = self.edges()
         return {edge.to_tuple() for edge in edges}
 
