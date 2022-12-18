@@ -1,3 +1,6 @@
+from typing import Hashable
+
+
 class OuroborosGraph:
     """
     An adjacency list implementation of a Graph Abstract Data Type
@@ -150,6 +153,8 @@ class OuroborosGraph:
         :return:
         :raises Exception: when node exists already
         """
+        if not isinstance(x, Hashable):
+            raise Exception("Node must be hashable.")
         if self.contains(x):
             raise Exception("Node exists already.")
         self._size += 1

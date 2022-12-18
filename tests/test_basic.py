@@ -129,6 +129,22 @@ def test_add_node__already_exists():
     assert g.size() == 1
 
 
+def test_add_node__not_hashable():
+    with pytest.raises(Exception, match="Node must be hashable."):
+        g = OuroborosGraph()
+        g.add_node([1, 2])
+
+
+def test_add_node__class_implements_hash():
+    class T:
+        def __hash__(self):
+            return hash(id(self))
+    t = T()
+    g = OuroborosGraph()
+    g.add_node(t)
+    assert g.size() == 1
+
+
 def test_add_edge():
     g = OuroborosGraph()
     g.add_node(1)
