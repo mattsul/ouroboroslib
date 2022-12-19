@@ -259,17 +259,16 @@ class OuroborosGraph:
         self._num_edges = 0
         self._size = 0
 
-    def overwrite_graph(self, edge_list: list[tuple] = []) -> None:
+    def overwrite_graph(self, node_list: list[Any] = [],
+                        edge_list: list[tuple] = []) -> None:
         """
         Takes in a list of tuples (x, y, value) and overwrites the existing graph
-        :param edge_list: list of edges to generate the new connected graph
+        :param node_list: list of nodes to generate the new graph
+        :param edge_list: list of edges to generate the new graph
         :return:
         """
         self.clear()
+        for x in node_list:
+            self.add_node(x)
         for x, y, value in edge_list:
-            if not self.contains(x):
-                self.add_node(x)
-            if not self.contains(y):
-                self.add_node(y)
-            if not self.contains_edge(x, y):
-                self.add_edge(x, y, value)
+            self.add_edge(x, y, value)

@@ -272,7 +272,9 @@ def test_overwrite_graph():
     g.add_node(3)
     g.add_edge(1, 2, value=-1)
     g.add_edge(2, 3, value=-1)
-    g.overwrite_graph(edge_list = [(1, 3, -1), (1, 2, 3)])
+    g.overwrite_graph(
+        node_list=[1, 2, 3],
+        edge_list=[(1, 3, -1), (1, 2, 3)])
     assert g.num_edges() == 2
     assert g.size() == 3
     assert g.edges() == {(1, 3, -1), (1, 2, 3)}
