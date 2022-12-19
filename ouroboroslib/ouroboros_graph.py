@@ -1,4 +1,5 @@
-from typing import Hashable
+from typing import Hashable, Any
+from collections import namedtuple
 
 
 class OuroborosGraph:
@@ -8,66 +9,73 @@ class OuroborosGraph:
 
     class Edge:
         """
-        A single edge in an OGraph
+        An edge in an OuroborosGraph
         """
 
         __slots__ = "_start", "_end", "_data"
 
-        def __init__(self, start, end, data):
-            self._start = start
-            self._end = end
-            self._data = data
-
-        def start(self):
+        def __init__(self, start: Any, end: Any, data: Any) -> None:
             """
-            Returns the starting node of the edge
-            :return: starting node of the edge
+            Initializes an edge
+            :param start: start node of the edge
+            :param end: end node of the edge
+            :param data: data
+            """
+            self._start: Any = start
+            self._end: Any = end
+            self._data: Any = data
+
+        def start(self) -> Any:
+            """
+            Returns the start node of the edge
+            :return: start node of the edge
             """
             return self._start
 
-        def end(self):
+        def end(self) -> Any:
             """
-            Returns ending node of the edge
-            :return: ending node of the edge
+            Returns end node of the edge
+            :return: end node of the edge
             """
             return self._end
 
-        def data(self):
+        def data(self) -> Any:
             """
             Returns the data of the edge
             :return: data of the edge
             """
             return self._data
 
-        def to_tuple(self):
+        def to_tuple(self) -> tuple:
             """
             Converts to a tuple
             :return: a tuple (start, end, data)
             """
-            return self._start, self._end, self._data
+            EdgeTuple = namedtuple('EdgeTuple', 'start end data')
+            return EdgeTuple(start=self._start, end=self._end, data=self._data)
 
-        def __hash__(self):
+        def __hash__(self) -> int:
             return hash(id(self))
 
-    def __init__(self, directed=False):
+    def __init__(self, directed: bool = False) -> None:
         """
         Initializes an empty graph
         :param directed: whether the graph uses directed edges or not
         """
-        self._size = 0
-        self._num_edges = 0
-        self._directed = directed
-        self._outgoing = {}
-        self._incoming = {}
+        self._size: int = 0
+        self._num_edges: int = 0
+        self._directed: bool = directed
+        self._outgoing: dict = {}
+        self._incoming: dict = {}
 
-    def size(self):
+    def size(self) -> int:
         """
         Returns the number of nodes in the graph
         :return: number of nodes in the graph
         """
         return self._size
 
-    def num_edges(self):
+    def num_edges(self) -> int:
         """
         Returns the number of edges in the graph
         :return:
@@ -81,7 +89,7 @@ class OuroborosGraph:
         """
         return self._directed
 
-    def contains(self, x) -> bool:
+    def contains(self, x: Any) -> bool:
         """
         Returns whether node x exists in the graph
         :param x: The node to test
@@ -89,7 +97,7 @@ class OuroborosGraph:
         """
         return x in self._outgoing
 
-    def contains_edge(self, x, y):
+    def contains_edge(self, x: Any, y: Any) -> bool:
         """
         Returns whether the edge (x, y) exists
         :param x: starting node of the edge
@@ -98,14 +106,41 @@ class OuroborosGraph:
         """
         return y in self._outgoing[x]
 
-    def nodes(self):
+    def in_degree(self, x: Any) -> int:
+        """
+        Returns the indegree of node x
+        :param x: the node to get an indegree of
+        :return: the number of edges directed towards x
+        """
+        return len(self._incoming[x])
+
+    def out_degree(self, x: Any) -> int:
+        """
+        Returns the outdegree of node x
+        :param x: the node to get an outdegree of
+        :return: the number of edges directed outward from x
+        """
+        return len(self._outgoing[x])
+
+    def degree(self, x: Any) -> int:
+        """
+        Returns the sum of indegree and outdegree for x for a directed graph,
+        Returns the number of edges incident to x for an undirected graph
+        :param x: the node to get a degree of
+        :return: the degree of x
+        """
+        if self.is_directed():
+            return self.in_degree(x) + self.out_degree(x)
+        return self.out_degree(x)
+
+    def nodes(self) -> set[Any]:
         """
         Returns a set of all the nodes
         :return: A set of all the nodes
         """
         return set(self._outgoing.keys())
 
-    def adjacent_nodes(self, x):
+    def adjacent_nodes(self, x: Any) -> set[Any]:
         """
         Returns a set of the adjacent nodes to x, nodes
         which are immediately reachable by x
@@ -114,7 +149,7 @@ class OuroborosGraph:
         """
         return set(self._outgoing[x].keys())
 
-    def is_adjacent(self, x, y):
+    def is_adjacent(self, x: Any, y: Any) -> bool:
         """
         Returns whether y is adjacent to x, which is True
         if y is immediately reachable by an edge from x
@@ -124,7 +159,7 @@ class OuroborosGraph:
         """
         return y in self.adjacent_nodes(x)
 
-    def edges(self):
+    def edges(self) -> set[tuple]:
         """
         Returns a set of all the edges
         :return: A set of all the edges
@@ -132,26 +167,18 @@ class OuroborosGraph:
         def find_edges(mapping, result):
             for secondary_dict in mapping.values():
                 result.update(secondary_dict.values())
-        edges = set()
+        edges: set[OuroborosGraph.Edge] = set()
         find_edges(self._outgoing, edges)
-        if self.is_directed():
-            find_edges(self._incoming, edges)
-        return edges
-
-    def tuple_edges(self):
-        """
-        Returns a set of the edges as tuples
-        :return: A set of all edges as tuples
-        """
-        edges = self.edges()
+        find_edges(self._incoming, edges)
         return {edge.to_tuple() for edge in edges}
 
-    def add_node(self, x) -> None:
+    def add_node(self, x: Any) -> None:
         """
         Adds the node x to the graph
         :param x: the node to be added
         :return:
         :raises Exception: when node exists already
+        :raises Exception: when node is not hashable
         """
         if not isinstance(x, Hashable):
             raise Exception("Node must be hashable.")
@@ -161,7 +188,7 @@ class OuroborosGraph:
         self._outgoing[x] = {}
         self._incoming[x] = {}
 
-    def add_edge(self, x, y, value=None):
+    def add_edge(self, x: Any, y: Any, value: Any = None) -> None:
         """
         Inserts an edge between x and y with data z
         :param x: the starting node of the edge
@@ -174,16 +201,17 @@ class OuroborosGraph:
             raise Exception("Cannot insert edge with missing node.")
         if self.contains_edge(x, y):
             raise Exception("Cannot insert edge that already exists.")
+        if not isinstance(value, Hashable):
+            raise Exception("Value on edge must be hashable.")
         self._num_edges += 1
-        edge = self.Edge(x, y, value)
+        edge: OuroborosGraph.Edge = self.Edge(x, y, value)
         self._outgoing[x][y] = edge
         self._incoming[y][x] = edge
         if not self.is_directed():
-            edge2 = self.Edge(y, x, value)
-            self._outgoing[y][x] = edge2
-            self._incoming[x][y] = edge2
+            self._outgoing[y][x] = edge
+            self._incoming[x][y] = edge
 
-    def delete_node(self, x):
+    def delete_node(self, x: Any) -> None:
         """
         Deletes the node from the graph and its associated edges
         :param x: the node to be deleted
@@ -200,14 +228,15 @@ class OuroborosGraph:
         del self._incoming[x]
         self._size -= 1
 
-    def delete_edge(self, x, y):
+    def delete_edge(self, x: Any, y: Any) -> None:
         """
         Deletes the edge from x to y. If graph is undirected, then
         deletes the undirected edge
         :param x: the starting node
         :param y: the ending node
         :return:
-        :raises Exception: when nodes are missing or edge does not exist
+        :raises Exception: when nodes are missing
+        :raises Exception: when edge does not exist
         """
         if not self.contains(x) or not self.contains(y):
             raise Exception("Cannot delete edge with missing node.")
@@ -220,13 +249,17 @@ class OuroborosGraph:
             del self._incoming[x][y]
         self._num_edges -= 1
 
-    def clear(self):
+    def clear(self) -> None:
+        """
+        Resets the graph to an empty graph
+        :return:
+        """
         self._outgoing = {}
         self._incoming = {}
         self._num_edges = 0
         self._size = 0
 
-    def overwrite_graph(self, edge_list=[]):
+    def overwrite_graph(self, edge_list: list[tuple] = []) -> None:
         """
         Takes in a list of tuples (x, y, value) and overwrites the existing graph
         :param edge_list: list of edges to generate the new connected graph

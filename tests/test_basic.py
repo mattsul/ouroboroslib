@@ -68,22 +68,21 @@ def test_edges():
     g.add_edge(1, 2, value=-1)
     g.add_edge(2, 3, value=-1)
     g.add_edge(3, 1)
-    expected = {(1, 2, -1), (2, 3, -1), (3, 1, None),
-                (2, 1, -1), (3, 2, -1), (1, 3, None)}
-    edges = {e.to_tuple() for e in g.edges()}
+    expected = {(1, 2, -1), (2, 3, -1), (3, 1, None)}
+    edges = g.edges()
     assert expected == edges
 
 
-def test_tuple_edges():
-    g = OuroborosGraph()
-    g.add_node(1)
-    g.add_node(2)
-    g.add_node(3)
-    g.add_edge(1, 2, value=-1)
-    g.add_edge(2, 3, value=-1)
-    g.add_edge(3, 1)
-    assert g.tuple_edges() == {(1, 2, -1), (2, 3, -1), (3, 1, None),
-                               (2, 1, -1), (3, 2, -1), (1, 3, None)}
+def test_indegree():
+    pass
+
+
+def test_outdegree():
+    pass
+
+
+def test_degree():
+    pass
 
 
 def test_adjacent_nodes():
@@ -95,6 +94,7 @@ def test_adjacent_nodes():
     g.add_edge(2, 3)
     g.add_edge(1, 3, None)
     assert g.adjacent_nodes(1) == {2, 3}
+    assert g.adjacent_nodes(3) == {1, 2}
 
 
 def test_is_adjacent():
@@ -154,8 +154,7 @@ def test_add_edge():
     g.add_edge(1, 2, value=-1)
     g.add_edge(2, 3, value=-1)
     g.add_edge(3, 1, None)
-    assert g.tuple_edges() == {(1, 2, -1), (2, 3, -1), (3, 1, None),
-                               (2, 1, -1), (3, 2, -1), (1, 3, None)}
+    assert g.edges() == {(1, 2, -1), (2, 3, -1), (3, 1, None)}
     assert g.num_edges() == 3
 
 
@@ -178,6 +177,15 @@ def test_add_edge__edge_exists():
     assert g.num_edges() == 1
 
 
+def test_add_edge__value_not_hashable():
+    with pytest.raises(Exception, match="Value on edge must be hashable."):
+        g = OuroborosGraph()
+        g.add_node(1)
+        g.add_node(2)
+        g.add_edge(1, 2, [1])
+    assert g.num_edges() == 0
+
+
 def test_delete_node():
     g = OuroborosGraph()
     g.add_node(1)
@@ -192,8 +200,7 @@ def test_delete_node():
     g.delete_node(1)
     assert g.size() == 3
     assert g.nodes() == {2, 3, 4}
-    assert g.tuple_edges() == {(4, 2, -1), (3, 2, -1),
-                               (2, 4, -1), (2, 3, -1)}
+    assert g.edges() == {(4, 2, -1), (3, 2, -1)}
 
 
 def test_delete_node__does_not_exist():
@@ -216,8 +223,7 @@ def test_delete_edge():
     g.add_edge(3, 1)
     g.add_edge(2, 4, value=-1)
     g.delete_edge(2, 3)
-    assert g.tuple_edges() == {(1, 2, -1), (3, 1, None), (2, 4, -1),
-                               (2, 1, -1), (1, 3, None), (4, 2, -1)}
+    assert g.edges() == {(1, 2, -1), (3, 1, None), (2, 4, -1)}
     assert g.size() == 4
     assert g.num_edges() == 3
 
@@ -266,8 +272,7 @@ def test_overwrite_graph():
     g.add_node(3)
     g.add_edge(1, 2, value=-1)
     g.add_edge(2, 3, value=-1)
-    g.overwrite_graph([(1, 3, -1), (3, 4, 1)])
+    g.overwrite_graph(edge_list = [(1, 3, -1), (1, 2, 3)])
     assert g.num_edges() == 2
     assert g.size() == 3
-    assert g.tuple_edges() == {(1, 3, -1), (3, 4, 1),
-                               (3, 1, -1), (4, 3, 1)}
+    assert g.edges() == {(1, 3, -1), (1, 2, 3)}

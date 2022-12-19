@@ -15,4 +15,4 @@ def test_delete_node():
     g.delete_node(1)
     assert g.size() == 3
     assert g.nodes() == {2, 3, 4}
-    assert g.tuple_edges() == {(4, 2, -1), (3, 2, -1)}
+    assert g.edges() == {(4, 2, -1), (3, 2, -1)}
